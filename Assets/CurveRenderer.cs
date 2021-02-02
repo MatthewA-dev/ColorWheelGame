@@ -32,14 +32,13 @@ public class CurveRenderer : MonoBehaviour
         foreach (Curve curve in lines)
         {
             floats.Add(curve.angle);
-            CreatePoints(curve.lineRenderer, floats);
+            CreatePoints(curve.lineRenderer, floats, curve.offset);
         }
     }
-    void CreatePoints (LineRenderer line, List<float> floats)
+    void CreatePoints (LineRenderer line, List<float> floats, float offset)
     {
         float x;
         float y;
-        float offset = 0f;
         foreach (float floatPart in floats)
         {
             offset += floatPart;
@@ -55,13 +54,7 @@ public class CurveRenderer : MonoBehaviour
     public void Rotate(float input){
         foreach (Curve curve in lines)
         {
-            for (int i = 0; i < curve.lineRenderer.positionCount; i += 2){
-                Vector3 pos = curve.lineRenderer.transform.position + curve.lineRenderer.GetPosition(i);
-                Vector3 posRotated = new Vector3((pos.x * Mathf.Cos(input * Mathf.Rad2Deg)) + (pos.y * Mathf.Sin(input* Mathf.Rad2Deg))
-                                                ,(pos.x * -1 * Mathf.Sin(input * Mathf.Rad2Deg)) + (pos.y * Mathf.Cos(input * Mathf.Rad2Deg)),
-                                                0);
-                curve.lineRenderer.SetPosition(i, posRotated);
-            }
+            curve.offset -= input;
         }
     }
 }

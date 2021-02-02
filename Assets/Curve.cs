@@ -9,6 +9,7 @@ public class Curve{
     { get; set; }
     public ColorType colorType
     { get; set; }
+    public float offset = 0f;
     public Curve(LineRenderer line, float angle, ColorType type){
         this.lineRenderer = line;
         this.angle = angle;

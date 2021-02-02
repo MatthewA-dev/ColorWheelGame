@@ -23,7 +23,7 @@ public class InputManager : MonoBehaviour
             curve.Rotate(-150f * Time.deltaTime);
         }
         if(Input.GetKeyDown(KeyCode.Space)){
-            GetComponent<BallManager>().SpawnEnemy();
+            GetComponent<BallManager>().SpawnEnemy(Camera.main.ScreenToWorldPoint(Input.mousePosition));
         }
     }
 }

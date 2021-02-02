@@ -53,17 +53,16 @@ public class BallManager : MonoBehaviour
     public ColorType closestPoint(Vector3 point){
         Vector3 closePoint = new Vector3(99999,99999,99999);
         ColorType color = ColorType.COLOR1;
-        float angle = 0;
-        float range = 360f / CurveRenderer.lines.Count;
-        float degrees = Mathf.Atan2(point.x - transform.position.x, point.y - transform.position.y) * Mathf.Rad2Deg;
-        for (int i = 0; i < CurveRenderer.lines.Count; i++)
-        {
-            if(range * i + transform.eulerAngles.z <= degrees &&  degrees <= range * (i+1) + transform.eulerAngles.z){
-                Debug.Log("ef");
-                color = CurveRenderer.lines[i].colorType;
+        foreach (Curve curve in CurveRenderer.lines){
+            for (int i = 0; i < curve.lineRenderer.positionCount; i += 2){
+                Vector3 pos = curve.lineRenderer.transform.position + curve.lineRenderer.GetPosition(i);
+                if(Vector3.Distance(point,pos) < Vector3.Distance(point,closePoint)){
+                    closePoint = pos;
+                    color = curve.colorType;
+                }
             }
         }
-        Debug.Log(color.ToString() + " " + degrees);
+        Debug.Log(color);
         return color;
     }
     public GameObject CheckPoint(Vector3 point){
@@ -75,7 +74,9 @@ public class BallManager : MonoBehaviour
         }
         return null;
     }
-    public void SpawnEnemy(){
-        enemies.Add(Instantiate(enemy));
+    public void SpawnEnemy(Vector2 pos){
+        GameObject tempEnemy = Instantiate(enemy);
+        tempEnemy.transform.position = pos;
+        enemies.Add(tempEnemy);
     }
 }
