@@ -1,11 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using System;
 
 public class BallManager : MonoBehaviour
 {
+    // Used to track time between times for spawning balls
+    private float timeTaken = 0;
     public GameObject enemy;
+    public GameObject score;
     private CircleCollider2D coll;
     public List<GameObject> enemies = new List<GameObject>();
     // Start is called before the first frame update
@@ -43,11 +47,20 @@ public class BallManager : MonoBehaviour
                 ColorType type = closestPoint(enemyCollider.gameObject.transform.position);
                 if(type == enemyCollider.gameObject.GetComponent<EnemyController>().color){
                     Delete(enemyCollider.gameObject);
+                    score.GetComponent<TMP_Text>().text = (int.Parse(score.GetComponent<TMP_Text>().text) + 1).ToString(); 
                 }else{
+                    score.GetComponent<TMP_Text>().text = (int.Parse(score.GetComponent<TMP_Text>().text) - 1).ToString(); 
                     Delete(enemyCollider.gameObject);
                 }
             }
         }
+        //Spawn balls
+        if(timeTaken > 0.25f){
+            timeTaken = 0f;
+            System.Random rand = new System.Random();
+            SpawnEnemy(float.Parse((360 * rand.NextDouble()).ToString()), (ColorType) Enum.GetValues(typeof(ColorType)).GetValue(rand.Next(0, Enum.GetValues(typeof(ColorType)).Length)));
+        }
+        timeTaken += Time.deltaTime;
     }
     // Get closest point from a linerenderer, Defaults to returning COLOR1
     public ColorType closestPoint(Vector3 point){
@@ -62,7 +75,6 @@ public class BallManager : MonoBehaviour
                 }
             }
         }
-        Debug.Log(color);
         return color;
     }
     public GameObject CheckPoint(Vector3 point){
@@ -74,9 +86,12 @@ public class BallManager : MonoBehaviour
         }
         return null;
     }
-    public void SpawnEnemy(Vector2 pos){
+    public void SpawnEnemy(float angle, ColorType type){
         GameObject tempEnemy = Instantiate(enemy);
-        tempEnemy.transform.position = pos;
+        angle  += 90;
+        angle *= Mathf.Deg2Rad;
+        tempEnemy.transform.position = new Vector3(Mathf.Cos(angle) * 4, Mathf.Sin(angle) * 8, 10);
+        tempEnemy.GetComponent<EnemyController>().color = type;
         enemies.Add(tempEnemy);
     }
 }
